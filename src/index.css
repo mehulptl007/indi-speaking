@@ -2,41 +2,69 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
+/* Chardham Hindu Mythology App - Celestial Design System
+All colors MUST be HSL - Sacred Hindu & Cosmic Theme
 */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Cosmic Dark Background */
+    --background: 235 45% 8%;
+    --foreground: 45 95% 85%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    /* Card System - Deep cosmic with subtle glow */
+    --card: 235 35% 12%;
+    --card-foreground: 45 90% 88%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    /* Popover System */
+    --popover: 235 40% 10%;
+    --popover-foreground: 45 95% 90%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Sacred Saffron Primary */
+    --primary: 35 95% 65%;
+    --primary-foreground: 235 50% 8%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Cosmic Secondary */
+    --secondary: 250 35% 18%;
+    --secondary-foreground: 45 85% 85%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Muted Cosmic */
+    --muted: 240 25% 15%;
+    --muted-foreground: 45 40% 65%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Golden Accent */
+    --accent: 45 85% 70%;
+    --accent-foreground: 235 50% 8%;
 
+    /* Destructive remains similar */
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    /* Cosmic Borders */
+    --border: 240 25% 20%;
+    --input: 240 25% 18%;
+    --ring: 35 95% 65%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
+
+    /* Custom Chardham Design Tokens */
+    --sacred-gold: 45 95% 70%;
+    --sacred-gold-light: 45 90% 80%;
+    --cosmic-purple: 250 45% 25%;
+    --cosmic-blue: 220 45% 20%;
+    --temple-bronze: 35 65% 45%;
+    
+    /* Gradients */
+    --gradient-cosmic: linear-gradient(135deg, hsl(235 45% 8%), hsl(250 35% 15%));
+    --gradient-sacred: linear-gradient(135deg, hsl(35 95% 65%), hsl(45 85% 70%));
+    --gradient-temple: linear-gradient(180deg, hsl(235 45% 8%), hsl(240 35% 12%));
+    
+    /* Shadows */
+    --shadow-cosmic: 0 10px 40px -10px hsl(35 95% 65% / 0.3);
+    --shadow-glow: 0 0 30px hsl(35 95% 65% / 0.2);
+    
+    /* Animations */
+    --transition-sacred: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 
     --sidebar-background: 0 0% 98%;
 
@@ -56,33 +84,34 @@ All colors MUST be HSL.
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    /* Dark mode uses the same cosmic theme - already optimized for dark */
+    --background: 235 50% 6%;
+    --foreground: 45 95% 90%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 235 40% 10%;
+    --card-foreground: 45 90% 90%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 235 45% 8%;
+    --popover-foreground: 45 95% 92%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 35 100% 70%;
+    --primary-foreground: 235 55% 6%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 250 40% 15%;
+    --secondary-foreground: 45 85% 88%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 240 30% 12%;
+    --muted-foreground: 45 35% 70%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 45 90% 75%;
+    --accent-foreground: 235 55% 6%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    --border: 240 30% 18%;
+    --input: 240 30% 16%;
+    --ring: 35 100% 70%;
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
@@ -101,5 +130,31 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    background-image: 
+      radial-gradient(at 20% 80%, hsl(35 95% 65% / 0.05) 0px, transparent 50%),
+      radial-gradient(at 80% 20%, hsl(250 45% 25% / 0.08) 0px, transparent 50%),
+      radial-gradient(at 40% 40%, hsl(220 45% 20% / 0.03) 0px, transparent 50%);
+  }
+}
+
+/* Custom component styles */
+@layer components {
+  .cosmic-card {
+    @apply bg-card border border-border rounded-lg p-6 backdrop-blur-sm;
+    background: linear-gradient(135deg, hsl(var(--card)), hsl(var(--card) / 0.8));
+    box-shadow: var(--shadow-glow);
+    transition: var(--transition-sacred);
+  }
+  
+  .cosmic-card:hover {
+    box-shadow: var(--shadow-cosmic);
+    transform: translateY(-2px);
+  }
+  
+  .sacred-text {
+    background: var(--gradient-sacred);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 }
