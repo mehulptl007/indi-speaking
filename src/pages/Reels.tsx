@@ -1,58 +1,21 @@
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Heart, Share2, MessageCircle, Play, Pause, Volume2, VolumeX, ArrowLeft } from "lucide-react";
+import { Heart, Share2, MessageCircle, Play, Pause, Volume2, VolumeX, ArrowLeft, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
-interface ReelData {
-  id: string;
-  title: string;
-  description: string;
-  videoUrl: string;
-  likes: number;
-  comments: number;
-  shares: number;
-}
-
-// Mock data - In real app, this would come from API
-const mockReels: ReelData[] = [
-  {
-    id: "1",
-    title: "राम जी का वन गमन",
-    description: "भगवान राम के 14 वर्षीय वनवास की पावन कथा। सीता माता और लक्ष्मण जी के साथ...",
-    videoUrl: "https://example.com/video1.mp4",
-    likes: 1245,
-    comments: 89,
-    shares: 156
-  },
-  {
-    id: "2", 
-    title: "कृष्ण लीला",
-    description: "श्री कृष्ण की बचपन की मनमोहक लीलाएं। माखन चोरी और गोपियों के साथ...",
-    videoUrl: "https://example.com/video2.mp4",
-    likes: 2341,
-    comments: 234,
-    shares: 445
-  },
-  {
-    id: "3",
-    title: "शिव महिमा",
-    description: "भोलेनाथ की महानता और उनकी अनंत शक्तियों की गाथा...",
-    videoUrl: "https://example.com/video3.mp4", 
-    likes: 3421,
-    comments: 567,
-    shares: 789
-  }
-];
+import { useReels } from "@/hooks/useReels";
+import { toast } from "@/hooks/use-toast";
 
 const Reels = () => {
   const navigate = useNavigate();
   const [currentReelIndex, setCurrentReelIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
+  const [likedReels, setLikedReels] = useState<Set<string>>(new Set());
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const currentReel = mockReels[currentReelIndex];
+  const { reels, loading, error, updateLikes, updateShares } = useReels();
+  const currentReel = reels[currentReelIndex];
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -85,7 +48,7 @@ const Reels = () => {
   };
 
   const handleSwipeUp = () => {
-    if (currentReelIndex < mockReels.length - 1) {
+    if (currentReelIndex < reels.length - 1) {
       setCurrentReelIndex(prev => prev + 1);
     }
   };
@@ -96,12 +59,87 @@ const Reels = () => {
     }
   };
 
+  const handleLike = async (reelId: string) => {
+    const isCurrentlyLiked = likedReels.has(reelId);
+    
+    if (isCurrentlyLiked) {
+      setLikedReels(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(reelId);
+        return newSet;
+      });
+      await updateLikes(reelId, false);
+    } else {
+      setLikedReels(prev => new Set([...prev, reelId]));
+      await updateLikes(reelId, true);
+      toast({
+        title: "रील को लाइक किया गया!",
+        description: "आपने इस रील को पसंद किया है।",
+      });
+    }
+  };
+
+  const handleShare = async (reelId: string) => {
+    await updateShares(reelId);
+    toast({
+      title: "रील शेयर किया गया!",
+      description: "इस रील को सफलतापूर्वक साझा किया गया।",
+    });
+    
+    // Web Share API if available
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: currentReel?.title,
+          text: currentReel?.description,
+          url: window.location.href,
+        });
+      } catch (err) {
+        console.log('Share cancelled');
+      }
+    }
+  };
+
   const formatCount = (count: number) => {
     if (count >= 1000) {
       return `${(count / 1000).toFixed(1)}K`;
     }
     return count.toString();
   };
+
+  if (loading) {
+    return (
+      <div className="fixed inset-0 bg-black flex items-center justify-center">
+        <div className="text-center text-white">
+          <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4" />
+          <p>लोड हो रहा है...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="fixed inset-0 bg-black flex items-center justify-center">
+        <div className="text-center text-white">
+          <p className="mb-4">कुछ त्रुटि हुई है: {error}</p>
+          <Button onClick={() => window.location.reload()}>
+            पुनः प्रयास करें
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  if (reels.length === 0) {
+    return (
+      <div className="fixed inset-0 bg-black flex items-center justify-center">
+        <div className="text-center text-white">
+          <p>कोई रील उपलब्ध नहीं है</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 bg-black overflow-hidden">
@@ -128,25 +166,33 @@ const Reels = () => {
         className="relative w-full h-full"
         style={{ transform: `translateY(-${currentReelIndex * 100}vh)` }}
       >
-        {mockReels.map((reel, index) => (
+        {reels.map((reel, index) => (
           <div
             key={reel.id}
             className="absolute inset-0 flex items-center justify-center"
             style={{ top: `${index * 100}vh` }}
           >
-            {/* Video Background - Placeholder for now */}
+            {/* Video Background with thumbnail */}
             <div className="absolute inset-0 bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
               <div className="absolute inset-0 bg-black/20"></div>
-              {/* Placeholder for video */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-center text-white/80">
-                  <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-white/10 flex items-center justify-center">
-                    <Play className="w-12 h-12" />
+              {/* Video or thumbnail display */}
+              {reel.thumbnail_url ? (
+                <img 
+                  src={reel.thumbnail_url} 
+                  alt={reel.title}
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+              ) : (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="text-center text-white/80">
+                    <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-white/10 flex items-center justify-center">
+                      <Play className="w-12 h-12" />
+                    </div>
+                    <p className="text-lg">Video Player</p>
+                    <p className="text-sm mt-2">{reel.title}</p>
                   </div>
-                  <p className="text-lg">Video Player Placeholder</p>
-                  <p className="text-sm mt-2">{reel.title}</p>
                 </div>
-              </div>
+              )}
             </div>
 
             {/* Controls Overlay */}
@@ -168,10 +214,13 @@ const Reels = () => {
               <Button
                 variant="ghost"
                 size="sm"
-                className="w-12 h-12 rounded-full bg-black/30 text-white hover:bg-black/50 flex flex-col p-0"
+                onClick={() => handleLike(reel.id)}
+                className={`w-12 h-12 rounded-full bg-black/30 text-white hover:bg-black/50 flex flex-col p-0 ${
+                  likedReels.has(reel.id) ? 'text-red-500' : ''
+                }`}
               >
-                <Heart className="w-6 h-6 mb-1" />
-                <span className="text-xs">{formatCount(reel.likes)}</span>
+                <Heart className={`w-6 h-6 mb-1 ${likedReels.has(reel.id) ? 'fill-current' : ''}`} />
+                <span className="text-xs">{formatCount(reel.likes_count)}</span>
               </Button>
 
               <Button
@@ -180,16 +229,17 @@ const Reels = () => {
                 className="w-12 h-12 rounded-full bg-black/30 text-white hover:bg-black/50 flex flex-col p-0"
               >
                 <MessageCircle className="w-6 h-6 mb-1" />
-                <span className="text-xs">{formatCount(reel.comments)}</span>
+                <span className="text-xs">{formatCount(reel.comments_count)}</span>
               </Button>
 
               <Button
                 variant="ghost"
                 size="sm"
+                onClick={() => handleShare(reel.id)}
                 className="w-12 h-12 rounded-full bg-black/30 text-white hover:bg-black/50 flex flex-col p-0"
               >
                 <Share2 className="w-6 h-6 mb-1" />
-                <span className="text-xs">{formatCount(reel.shares)}</span>
+                <span className="text-xs">{formatCount(reel.shares_count)}</span>
               </Button>
 
               <Button
@@ -233,7 +283,7 @@ const Reels = () => {
           )}
           
           <div className="flex flex-col space-y-1">
-            {mockReels.map((_, index) => (
+            {reels.map((_, index) => (
               <div
                 key={index}
                 className={`w-1 h-6 rounded-full ${
@@ -243,7 +293,7 @@ const Reels = () => {
             ))}
           </div>
 
-          {currentReelIndex < mockReels.length - 1 && (
+          {currentReelIndex < reels.length - 1 && (
             <Button
               variant="ghost"
               size="sm"

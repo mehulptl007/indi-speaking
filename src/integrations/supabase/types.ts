@@ -16,25 +16,82 @@ export type Database = {
     Tables: {
       CDimage: {
         Row: {
+          CommentSection: string[] | null
           created_at: string
           id: number
+          Image_Desc: string[] | null
           Image_Name: string | null
           Image_URL: string | null
           ImageOf: string | null
+          LikedBy: number | null
+          UploadedBy: string | null
         }
         Insert: {
+          CommentSection?: string[] | null
           created_at?: string
           id?: number
+          Image_Desc?: string[] | null
           Image_Name?: string | null
           Image_URL?: string | null
           ImageOf?: string | null
+          LikedBy?: number | null
+          UploadedBy?: string | null
         }
         Update: {
+          CommentSection?: string[] | null
           created_at?: string
           id?: number
+          Image_Desc?: string[] | null
           Image_Name?: string | null
           Image_URL?: string | null
           ImageOf?: string | null
+          LikedBy?: number | null
+          UploadedBy?: string | null
+        }
+        Relationships: []
+      }
+      reels: {
+        Row: {
+          category: string | null
+          comments_count: number | null
+          created_at: string
+          description: string | null
+          id: string
+          likes_count: number | null
+          shares_count: number | null
+          thumbnail_url: string | null
+          title: string
+          updated_at: string
+          uploaded_by: string | null
+          video_url: string
+        }
+        Insert: {
+          category?: string | null
+          comments_count?: number | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          likes_count?: number | null
+          shares_count?: number | null
+          thumbnail_url?: string | null
+          title: string
+          updated_at?: string
+          uploaded_by?: string | null
+          video_url: string
+        }
+        Update: {
+          category?: string | null
+          comments_count?: number | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          likes_count?: number | null
+          shares_count?: number | null
+          thumbnail_url?: string | null
+          title?: string
+          updated_at?: string
+          uploaded_by?: string | null
+          video_url?: string
         }
         Relationships: []
       }
