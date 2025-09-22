@@ -11,24 +11,37 @@ const Reels = () => {
   const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(true); // Default muted for autoplay
   const [likedReels, setLikedReels] = useState<Set<string>>(new Set());
-  const [videoLoading, setVideoLoading] = useState(true);
-  const [videoError, setVideoError] = useState(false);
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const [videoLoading, setVideoLoading] = useState<Record<number, boolean>>({});
+  const [videoError, setVideoError] = useState<Record<number, boolean>>({});
+  const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { reels, loading, error, updateLikes, updateShares } = useReels();
   const currentReel = reels[currentReelIndex];
 
+  // Initialize video refs array when reels change
+  useEffect(() => {
+    videoRefs.current = videoRefs.current.slice(0, reels.length);
+  }, [reels.length]);
+
   // Auto play current video when reel changes
   useEffect(() => {
-    if (videoRef.current && currentReel) {
-      setVideoLoading(true);
-      setVideoError(false);
-      videoRef.current.currentTime = 0;
+    const currentVideo = videoRefs.current[currentReelIndex];
+    if (currentVideo && currentReel) {
+      setVideoLoading(prev => ({ ...prev, [currentReelIndex]: true }));
+      setVideoError(prev => ({ ...prev, [currentReelIndex]: false }));
+      currentVideo.currentTime = 0;
+      
+      // Pause all other videos
+      videoRefs.current.forEach((video, index) => {
+        if (video && index !== currentReelIndex) {
+          video.pause();
+        }
+      });
       
       const playVideo = async () => {
         try {
-          await videoRef.current?.play();
+          await currentVideo.play();
           setIsPlaying(true);
         } catch (error) {
           console.log('Video autoplay failed:', error);
@@ -53,52 +66,56 @@ const Reels = () => {
   }, []);
 
   const togglePlay = async () => {
-    if (videoRef.current) {
+    const currentVideo = videoRefs.current[currentReelIndex];
+    if (currentVideo) {
       try {
         if (isPlaying) {
-          videoRef.current.pause();
+          currentVideo.pause();
           setIsPlaying(false);
         } else {
-          await videoRef.current.play();
+          await currentVideo.play();
           setIsPlaying(true);
         }
       } catch (error) {
         console.log('Video play/pause failed:', error);
-        setVideoError(true);
+        setVideoError(prev => ({ ...prev, [currentReelIndex]: true }));
       }
     }
   };
 
   const toggleMute = () => {
-    if (videoRef.current) {
-      videoRef.current.muted = !isMuted;
+    const currentVideo = videoRefs.current[currentReelIndex];
+    if (currentVideo) {
+      currentVideo.muted = !isMuted;
       setIsMuted(!isMuted);
     }
   };
 
-  const handleVideoLoad = () => {
-    setVideoLoading(false);
-    setVideoError(false);
+  const handleVideoLoad = (index: number) => {
+    setVideoLoading(prev => ({ ...prev, [index]: false }));
+    setVideoError(prev => ({ ...prev, [index]: false }));
   };
 
-  const handleVideoError = () => {
-    setVideoLoading(false);
-    setVideoError(true);
+  const handleVideoError = (index: number) => {
+    setVideoLoading(prev => ({ ...prev, [index]: false }));
+    setVideoError(prev => ({ ...prev, [index]: true }));
   };
 
   const handleSwipeUp = () => {
     if (currentReelIndex < reels.length - 1) {
-      setCurrentReelIndex(prev => prev + 1);
-      setVideoLoading(true);
-      setVideoError(false);
+      const newIndex = currentReelIndex + 1;
+      setCurrentReelIndex(newIndex);
+      setVideoLoading(prev => ({ ...prev, [newIndex]: true }));
+      setVideoError(prev => ({ ...prev, [newIndex]: false }));
     }
   };
 
   const handleSwipeDown = () => {
     if (currentReelIndex > 0) {
-      setCurrentReelIndex(prev => prev - 1);
-      setVideoLoading(true);
-      setVideoError(false);
+      const newIndex = currentReelIndex - 1;
+      setCurrentReelIndex(newIndex);
+      setVideoLoading(prev => ({ ...prev, [newIndex]: true }));
+      setVideoError(prev => ({ ...prev, [newIndex]: false }));
     }
   };
 
@@ -206,13 +223,13 @@ const Reels = () => {
       {/* Main Reel Container */}
       <div 
         ref={containerRef}
-        className="relative w-full h-full"
+        className="relative w-full h-full transition-transform duration-300 ease-out"
         style={{ transform: `translateY(-${currentReelIndex * 100}vh)` }}
       >
         {reels.map((reel, index) => (
           <div
             key={reel.id}
-            className="absolute inset-0 flex items-center justify-center"
+            className="absolute inset-0 w-full h-full"
             style={{ top: `${index * 100}vh` }}
           >
             {/* Video Background */}
@@ -220,24 +237,24 @@ const Reels = () => {
               <div className="absolute inset-0 bg-black/20"></div>
               
               {/* Video Element */}
-              {reel.video_url && !videoError ? (
+              {reel.video_url && !videoError[index] ? (
                 <>
                   <video
-                    ref={index === currentReelIndex ? videoRef : null}
+                    ref={(el) => (videoRefs.current[index] = el)}
                     src={reel.video_url}
                     className="absolute inset-0 w-full h-full object-cover"
                     loop
                     muted={isMuted}
                     playsInline
                     preload="metadata"
-                    onLoadedData={handleVideoLoad}
-                    onError={handleVideoError}
-                    onLoadStart={() => setVideoLoading(true)}
+                    onLoadedData={() => handleVideoLoad(index)}
+                    onError={() => handleVideoError(index)}
+                    onLoadStart={() => setVideoLoading(prev => ({ ...prev, [index]: true }))}
                     poster={reel.thumbnail_url}
                   />
                   
                   {/* Video Loading Indicator */}
-                  {videoLoading && index === currentReelIndex && (
+                  {videoLoading[index] && index === currentReelIndex && (
                     <div className="absolute inset-0 flex items-center justify-center bg-black/40">
                       <Loader2 className="w-12 h-12 text-white animate-spin" />
                     </div>
@@ -246,7 +263,7 @@ const Reels = () => {
               ) : (
                 /* Fallback - Show thumbnail or placeholder */
                 <div className="absolute inset-0">
-                  {reel.thumbnail_url && !videoError ? (
+                  {reel.thumbnail_url && !videoError[index] ? (
                     <img 
                       src={reel.thumbnail_url} 
                       alt={reel.title}
@@ -256,26 +273,27 @@ const Reels = () => {
                     <div className="absolute inset-0 flex items-center justify-center">
                       <div className="text-center text-white/80">
                         <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-white/10 flex items-center justify-center">
-                          {videoError ? (
+                          {videoError[index] ? (
                             <AlertCircle className="w-12 h-12 text-red-400" />
                           ) : (
                             <Play className="w-12 h-12" />
                           )}
                         </div>
                         <p className="text-lg">
-                          {videoError ? "वीडियो लोड नहीं हो सका" : "Video Player"}
+                          {videoError[index] ? "वीडियो लोड नहीं हो सका" : "Video Player"}
                         </p>
                         <p className="text-sm mt-2">{reel.title}</p>
-                        {videoError && (
+                        {videoError[index] && (
                           <Button 
                             variant="outline" 
                             size="sm" 
                             className="mt-4"
                             onClick={() => {
-                              setVideoError(false);
-                              setVideoLoading(true);
-                              if (videoRef.current) {
-                                videoRef.current.load();
+                              setVideoError(prev => ({ ...prev, [index]: false }));
+                              setVideoLoading(prev => ({ ...prev, [index]: true }));
+                              const video = videoRefs.current[index];
+                              if (video) {
+                                video.load();
                               }
                             }}
                           >
@@ -378,9 +396,10 @@ const Reels = () => {
           
           <div className="flex flex-col space-y-1">
             {reels.map((_, index) => (
-              <div
+              <button
                 key={index}
-                className={`w-1 h-6 rounded-full ${
+                onClick={() => setCurrentReelIndex(index)}
+                className={`w-1 h-6 rounded-full transition-colors ${
                   index === currentReelIndex ? 'bg-white' : 'bg-white/30'
                 }`}
               />
