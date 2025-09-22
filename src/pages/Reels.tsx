@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Heart, Share2, MessageCircle, Play, Pause, Volume2, VolumeX, ArrowLeft, Loader2 } from "lucide-react";
+import { Heart, Share2, MessageCircle, Play, Pause, Volume2, VolumeX, ArrowLeft, Loader2, AlertCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useReels } from "@/hooks/useReels";
 import { toast } from "@/hooks/use-toast";
@@ -9,13 +9,36 @@ const Reels = () => {
   const navigate = useNavigate();
   const [currentReelIndex, setCurrentReelIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
-  const [isMuted, setIsMuted] = useState(false);
+  const [isMuted, setIsMuted] = useState(true); // Default muted for autoplay
   const [likedReels, setLikedReels] = useState<Set<string>>(new Set());
+  const [videoLoading, setVideoLoading] = useState(true);
+  const [videoError, setVideoError] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { reels, loading, error, updateLikes, updateShares } = useReels();
   const currentReel = reels[currentReelIndex];
+
+  // Auto play current video when reel changes
+  useEffect(() => {
+    if (videoRef.current && currentReel) {
+      setVideoLoading(true);
+      setVideoError(false);
+      videoRef.current.currentTime = 0;
+      
+      const playVideo = async () => {
+        try {
+          await videoRef.current?.play();
+          setIsPlaying(true);
+        } catch (error) {
+          console.log('Video autoplay failed:', error);
+          setIsPlaying(false);
+        }
+      };
+      
+      playVideo();
+    }
+  }, [currentReelIndex, currentReel]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -29,14 +52,20 @@ const Reels = () => {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  const togglePlay = () => {
+  const togglePlay = async () => {
     if (videoRef.current) {
-      if (isPlaying) {
-        videoRef.current.pause();
-      } else {
-        videoRef.current.play();
+      try {
+        if (isPlaying) {
+          videoRef.current.pause();
+          setIsPlaying(false);
+        } else {
+          await videoRef.current.play();
+          setIsPlaying(true);
+        }
+      } catch (error) {
+        console.log('Video play/pause failed:', error);
+        setVideoError(true);
       }
-      setIsPlaying(!isPlaying);
     }
   };
 
@@ -47,15 +76,29 @@ const Reels = () => {
     }
   };
 
+  const handleVideoLoad = () => {
+    setVideoLoading(false);
+    setVideoError(false);
+  };
+
+  const handleVideoError = () => {
+    setVideoLoading(false);
+    setVideoError(true);
+  };
+
   const handleSwipeUp = () => {
     if (currentReelIndex < reels.length - 1) {
       setCurrentReelIndex(prev => prev + 1);
+      setVideoLoading(true);
+      setVideoError(false);
     }
   };
 
   const handleSwipeDown = () => {
     if (currentReelIndex > 0) {
       setCurrentReelIndex(prev => prev - 1);
+      setVideoLoading(true);
+      setVideoError(false);
     }
   };
 
@@ -172,25 +215,76 @@ const Reels = () => {
             className="absolute inset-0 flex items-center justify-center"
             style={{ top: `${index * 100}vh` }}
           >
-            {/* Video Background with thumbnail */}
-            <div className="absolute inset-0 bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
+            {/* Video Background */}
+            <div className="absolute inset-0 bg-gradient-to-br from-cosmic-purple via-cosmic-blue to-background">
               <div className="absolute inset-0 bg-black/20"></div>
-              {/* Video or thumbnail display */}
-              {reel.thumbnail_url ? (
-                <img 
-                  src={reel.thumbnail_url} 
-                  alt={reel.title}
-                  className="absolute inset-0 w-full h-full object-cover"
-                />
-              ) : (
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="text-center text-white/80">
-                    <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-white/10 flex items-center justify-center">
-                      <Play className="w-12 h-12" />
+              
+              {/* Video Element */}
+              {reel.video_url && !videoError ? (
+                <>
+                  <video
+                    ref={index === currentReelIndex ? videoRef : null}
+                    src={reel.video_url}
+                    className="absolute inset-0 w-full h-full object-cover"
+                    loop
+                    muted={isMuted}
+                    playsInline
+                    preload="metadata"
+                    onLoadedData={handleVideoLoad}
+                    onError={handleVideoError}
+                    onLoadStart={() => setVideoLoading(true)}
+                    poster={reel.thumbnail_url}
+                  />
+                  
+                  {/* Video Loading Indicator */}
+                  {videoLoading && index === currentReelIndex && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+                      <Loader2 className="w-12 h-12 text-white animate-spin" />
                     </div>
-                    <p className="text-lg">Video Player</p>
-                    <p className="text-sm mt-2">{reel.title}</p>
-                  </div>
+                  )}
+                </>
+              ) : (
+                /* Fallback - Show thumbnail or placeholder */
+                <div className="absolute inset-0">
+                  {reel.thumbnail_url && !videoError ? (
+                    <img 
+                      src={reel.thumbnail_url} 
+                      alt={reel.title}
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="text-center text-white/80">
+                        <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-white/10 flex items-center justify-center">
+                          {videoError ? (
+                            <AlertCircle className="w-12 h-12 text-red-400" />
+                          ) : (
+                            <Play className="w-12 h-12" />
+                          )}
+                        </div>
+                        <p className="text-lg">
+                          {videoError ? "वीडियो लोड नहीं हो सका" : "Video Player"}
+                        </p>
+                        <p className="text-sm mt-2">{reel.title}</p>
+                        {videoError && (
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="mt-4"
+                            onClick={() => {
+                              setVideoError(false);
+                              setVideoLoading(true);
+                              if (videoRef.current) {
+                                videoRef.current.load();
+                              }
+                            }}
+                          >
+                            पुनः प्रयास करें
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
