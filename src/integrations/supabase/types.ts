@@ -50,6 +50,116 @@ export type Database = {
         }
         Relationships: []
       }
+      god_content: {
+        Row: {
+          content: string
+          created_at: string
+          god_id: string
+          id: string
+          image_url: string | null
+          section_id: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          god_id: string
+          id?: string
+          image_url?: string | null
+          section_id: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          god_id?: string
+          id?: string
+          image_url?: string | null
+          section_id?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "god_content_god_id_fkey"
+            columns: ["god_id"]
+            isOneToOne: false
+            referencedRelation: "gods"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "god_content_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "god_sections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      god_sections: {
+        Row: {
+          created_at: string
+          god_id: string
+          id: string
+          order_index: number
+          section_name: string
+        }
+        Insert: {
+          created_at?: string
+          god_id: string
+          id?: string
+          order_index?: number
+          section_name: string
+        }
+        Update: {
+          created_at?: string
+          god_id?: string
+          id?: string
+          order_index?: number
+          section_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "god_sections_god_id_fkey"
+            columns: ["god_id"]
+            isOneToOne: false
+            referencedRelation: "gods"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      gods: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          name: string
+          order_index: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          name: string
+          order_index?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          name?: string
+          order_index?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       reels: {
         Row: {
           category: string | null
@@ -92,6 +202,119 @@ export type Database = {
           updated_at?: string
           uploaded_by?: string | null
           video_url?: string
+        }
+        Relationships: []
+      }
+      scripture_content: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          image_url: string | null
+          scripture_id: string
+          section_id: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          scripture_id: string
+          section_id: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          scripture_id?: string
+          section_id?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scripture_content_scripture_id_fkey"
+            columns: ["scripture_id"]
+            isOneToOne: false
+            referencedRelation: "scriptures"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scripture_content_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "scripture_sections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      scripture_sections: {
+        Row: {
+          created_at: string
+          id: string
+          order_index: number
+          scripture_id: string
+          section_name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          order_index?: number
+          scripture_id: string
+          section_name: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          order_index?: number
+          scripture_id?: string
+          section_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scripture_sections_scripture_id_fkey"
+            columns: ["scripture_id"]
+            isOneToOne: false
+            referencedRelation: "scriptures"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      scriptures: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          name: string
+          order_index: number
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          name: string
+          order_index?: number
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          name?: string
+          order_index?: number
+          updated_at?: string
         }
         Relationships: []
       }

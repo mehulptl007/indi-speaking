@@ -53,17 +53,81 @@ const Reels = () => {
     }
   }, [currentReelIndex, currentReel]);
 
+  // Handle keyboard navigation and swipe gestures
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.code === 'Space') {
         e.preventDefault();
         togglePlay();
+      } else if (e.code === 'ArrowUp') {
+        e.preventDefault();
+        handleSwipeUp();
+      } else if (e.code === 'ArrowDown') {
+        e.preventDefault();
+        handleSwipeDown();
       }
     };
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [currentReelIndex, reels.length]);
+
+  // Touch event handlers for swipe gestures
+  useEffect(() => {
+    let startY = 0;
+    let startTime = 0;
+    const threshold = 50; // minimum distance for a swipe
+    const maxTime = 300; // maximum time for a swipe
+
+    const handleTouchStart = (e: TouchEvent) => {
+      startY = e.touches[0].clientY;
+      startTime = Date.now();
+    };
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      const endY = e.changedTouches[0].clientY;
+      const endTime = Date.now();
+      const distance = startY - endY;
+      const duration = endTime - startTime;
+
+      if (Math.abs(distance) > threshold && duration < maxTime) {
+        if (distance > 0) {
+          // Swipe up - next reel
+          handleSwipeUp();
+        } else {
+          // Swipe down - previous reel
+          handleSwipeDown();
+        }
+      }
+    };
+
+    // Mouse wheel event for desktop
+    const handleWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      if (e.deltaY > 0) {
+        // Scroll down - next reel
+        handleSwipeUp();
+      } else {
+        // Scroll up - previous reel
+        handleSwipeDown();
+      }
+    };
+
+    const container = containerRef.current;
+    if (container) {
+      container.addEventListener('touchstart', handleTouchStart, { passive: true });
+      container.addEventListener('touchend', handleTouchEnd, { passive: true });
+      container.addEventListener('wheel', handleWheel, { passive: false });
+    }
+
+    return () => {
+      if (container) {
+        container.removeEventListener('touchstart', handleTouchStart);
+        container.removeEventListener('touchend', handleTouchEnd);
+        container.removeEventListener('wheel', handleWheel);
+      }
+    };
+  }, [currentReelIndex, reels.length]);
 
   const togglePlay = async () => {
     const currentVideo = videoRefs.current[currentReelIndex];
