@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Reels from "./pages/Reels";
+import SacredPlaces from "./pages/SacredPlaces";
 import ComingSoon from "./pages/ComingSoon";
 import NotFound from "./pages/NotFound";
 
@@ -19,7 +20,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/reels" element={<Reels />} />
-          <Route path="/places" element={<ComingSoon title="पवित्र स्थल | Sacred Places" />} />
+          <Route path="/places" element={<SacredPlaces />} />
           <Route path="/gods" element={<ComingSoon title="देवी देवता | Hindu Gods" />} />
           <Route path="/scriptures" element={<ComingSoon title="शास्त्र | Scriptures" />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
