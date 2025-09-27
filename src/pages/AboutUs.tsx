@@ -2,20 +2,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Mail, Phone, MapPin, Heart, Star, Target } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
 const AboutUs = () => {
   const navigate = useNavigate();
-
-  return (
-    <div className="min-h-screen bg-background">
+  return <div className="min-h-screen bg-background">
       {/* Header with Back Button */}
       <div className="sticky top-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
         <div className="max-w-4xl mx-auto px-4 h-16 flex items-center">
-          <Button 
-            variant="ghost" 
-            onClick={() => navigate(-1)}
-            className="mr-4"
-          >
+          <Button variant="ghost" onClick={() => navigate(-1)} className="mr-4">
             <ArrowLeft className="w-5 h-5 mr-2" />
             वापस | Back
           </Button>
@@ -98,30 +91,17 @@ const AboutUs = () => {
                     <div className="text-4xl">🕉️</div>
                   </div>
                 </div>
-                <CardTitle className="text-2xl sacred-text">श्री राज शर्मा</CardTitle>
-                <p className="text-lg text-accent font-semibold">Shri Raj Sharma</p>
+                <CardTitle className="text-2xl sacred-text">Virendra Pal</CardTitle>
+                <p className="text-lg text-accent font-semibold">
+              </p>
                 <p className="text-muted-foreground">संस्थापक एवं मुख्य कार्यकारी अधिकारी</p>
                 <p className="text-sm text-muted-foreground/80">Founder & Chief Executive Officer</p>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground mb-4">
-                  श्री राज शर्मा जी का जन्म एक धार्मिक परिवार में हुआ था। उन्होंने संस्कृत और वेदशास्त्र में स्नातकोत्तर की शिक्षा प्राप्त की है। 
-                  प्रौद्योगिकी के क्षेत्र में 15 वर्षों के अनुभव के साथ, वे धर्म और तकनीक के संयोजन के माध्यम से आध्यात्मिक शिक्षा को 
-                  आधुनिक युग में प्रासंगिक बनाने के लिए प्रतिबद्ध हैं।
-                </p>
+                
                 <p className="text-sm text-muted-foreground/80 mb-4">
-                  Born into a religious family, Shri Raj Sharma holds a postgraduate degree in Sanskrit and Vedic studies. 
-                  With 15 years of experience in technology, he is committed to making spiritual education relevant in the modern age 
-                  through the combination of dharma and technology.
-                </p>
-                <div className="space-y-2">
-                  <h4 className="font-semibold text-foreground">मुख्य उपलब्धियां | Key Achievements:</h4>
-                  <ul className="text-sm text-muted-foreground space-y-1">
-                    <li>• वेदशास्त्र में गोल्ड मेडलिस्ट | Gold Medalist in Vedic Studies</li>
-                    <li>• 5+ आध्यात्मिक ऐप्स का विकास | Developed 5+ spiritual apps</li>
-                    <li>• राष्ट्रीय धर्म सम्मेलन के मुख्य वक्ता | Key speaker at National Dharma Conference</li>
-                  </ul>
-                </div>
+              </p>
+                
               </CardContent>
             </Card>
 
@@ -133,30 +113,18 @@ const AboutUs = () => {
                     <div className="text-4xl">🙏</div>
                   </div>
                 </div>
-                <CardTitle className="text-2xl sacred-text">श्रीमती प्रिया गुप्ता</CardTitle>
-                <p className="text-lg text-accent font-semibold">Smt. Priya Gupta</p>
+                <CardTitle className="text-2xl sacred-text">Mehul Patel</CardTitle>
+                <p className="text-lg text-accent font-semibold">
+              </p>
                 <p className="text-muted-foreground">सह-संस्थापक एवं रचनात्मक निदेशक</p>
                 <p className="text-sm text-muted-foreground/80">Co-Founder & Creative Director</p>
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground mb-4">
-                  श्रीमती प्रिया गुप्ता जी ने कला और धर्म के क्षेत्र में अपना जीवन समर्पित किया है। उन्होंने फाइन आर्ट्स में मास्टर्स की डिग्री प्राप्त की है 
-                  और भारतीय संस्कृति के संरक्षण में महत्वपूर्ण योगदान दिया है। उनकी रचनात्मक दृष्टि और कलात्मक समझ से धर्मयुग ऐप को एक 
-                  अनूठा और आकर्षक रूप मिला है।
-                </p>
+              </p>
                 <p className="text-sm text-muted-foreground/80 mb-4">
-                  Smt. Priya Gupta has dedicated her life to the fields of art and religion. She holds a Master's degree in Fine Arts 
-                  and has made significant contributions to the preservation of Indian culture. Her creative vision and artistic understanding 
-                  have given the Dharmayuga app a unique and attractive form.
-                </p>
-                <div className="space-y-2">
-                  <h4 className="font-semibold text-foreground">मुख्य उपलब्धियां | Key Achievements:</h4>
-                  <ul className="text-sm text-muted-foreground space-y-1">
-                    <li>• राष्ट्रीय कला पुरस्कार विजेता | National Art Award Winner</li>
-                    <li>• 100+ धार्मिक कलाकृतियों का सृजन | Created 100+ religious artworks</li>
-                    <li>• सांस्कृतिक संरक्षण में विशेषज्ञता | Expert in cultural preservation</li>
-                  </ul>
-                </div>
+              </p>
+                
               </CardContent>
             </Card>
           </div>
@@ -195,39 +163,15 @@ const AboutUs = () => {
         <section>
           <Card className="cosmic-card">
             <CardHeader>
-              <CardTitle className="text-2xl text-center sacred-text">
-                संपर्क सूत्र | Contact Information
-              </CardTitle>
+              
             </CardHeader>
             <CardContent>
               <div className="grid md:grid-cols-3 gap-6 text-center">
-                <div>
-                  <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-r from-primary to-accent flex items-center justify-center">
-                    <Mail className="w-6 h-6 text-white" />
-                  </div>
-                  <h4 className="font-semibold text-foreground mb-2">ईमेल | Email</h4>
-                  <p className="text-muted-foreground">contact@dharmayuga.com</p>
-                  <p className="text-muted-foreground">support@dharmayuga.com</p>
-                </div>
+                
 
-                <div>
-                  <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-r from-green-500 to-teal-500 flex items-center justify-center">
-                    <Phone className="w-6 h-6 text-white" />
-                  </div>
-                  <h4 className="font-semibold text-foreground mb-2">फोन | Phone</h4>
-                  <p className="text-muted-foreground">+91 98765 43210</p>
-                  <p className="text-muted-foreground">+91 87654 32109</p>
-                </div>
+                
 
-                <div>
-                  <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center">
-                    <MapPin className="w-6 h-6 text-white" />
-                  </div>
-                  <h4 className="font-semibold text-foreground mb-2">पता | Address</h4>
-                  <p className="text-muted-foreground">धर्मयुग टेक्नोलॉजीज</p>
-                  <p className="text-muted-foreground">नई दिल्ली, भारत</p>
-                  <p className="text-sm text-muted-foreground/80">New Delhi, India</p>
-                </div>
+                
               </div>
 
               <div className="mt-8 text-center">
@@ -237,19 +181,12 @@ const AboutUs = () => {
                 <p className="text-sm text-muted-foreground/80">
                   Join us and become a partner in the spiritual journey. Your suggestions and feedback are invaluable to us.
                 </p>
-                <Button 
-                  variant="outline" 
-                  className="mt-4 border-primary/20 hover:border-primary text-primary hover:bg-primary/10"
-                >
-                  हमसे संपर्क करें | Contact Us
-                </Button>
+                
               </div>
             </CardContent>
           </Card>
         </section>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default AboutUs;
