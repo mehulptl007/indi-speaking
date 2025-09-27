@@ -27,7 +27,7 @@ const Hero = () => {
           पवित्र हिंदू पुराणों की अनंत कहानियां। देवताओं, ऋषियों और पावन स्थलों की 
           दिव्य यात्रा में शामिल हों।
         </p>
-        <p className="text-sm md:text-base text-muted-foreground/80 mb-12 max-w-xl mx-auto">
+        <p className="text-sm text-muted-foreground/80 mb-12 max-w-xl mx-auto md:text-xl">
           Discover infinite stories of sacred Hindu mythology. Join the divine journey 
           of gods, sages, and holy places.
         </p>
@@ -35,9 +35,7 @@ const Hero = () => {
         <Button variant="default" size="lg" className="bg-gradient-to-r from-primary to-accent hover:from-accent hover:to-primary 
                      text-primary-foreground font-semibold px-8 py-4 text-lg
                      shadow-cosmic hover:shadow-glow transition-all duration-500
-                     rounded-full transform hover:scale-105">
-          यात्रा प्रारंभ करें | Begin Journey
-        </Button>
+                     rounded-full transform hover:scale-105">धर्म की ओर</Button>
       </div>
 
       {/* Scroll Indicator */}
