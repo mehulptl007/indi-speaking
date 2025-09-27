@@ -12,6 +12,7 @@ import GodContent from "./pages/GodContent";
 import Scriptures from "./pages/Scriptures";
 import ScriptureDetail from "./pages/ScriptureDetail";
 import ScriptureContent from "./pages/ScriptureContent";
+import AboutUs from "./pages/AboutUs";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,6 +33,7 @@ const App = () => (
           <Route path="/scriptures" element={<Scriptures />} />
           <Route path="/scriptures/:scriptureId" element={<ScriptureDetail />} />
           <Route path="/scriptures/:scriptureId/sections/:sectionId" element={<ScriptureContent />} />
+          <Route path="/about" element={<AboutUs />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

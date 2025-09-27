@@ -1,26 +1,19 @@
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Heart, Share2, MessageCircle, Play, Pause, Volume2, VolumeX, ArrowLeft, Loader2, AlertCircle } from "lucide-react";
+import { Play, Pause, Volume2, VolumeX, ArrowLeft, Loader2, AlertCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useReels } from "@/hooks/useReels";
-import { toast } from "@/hooks/use-toast";
+import ReelInteractionPanel from "@/components/ReelInteractionPanel";
 const Reels = () => {
   const navigate = useNavigate();
   const [currentReelIndex, setCurrentReelIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(true); // Default muted for autoplay
-  const [likedReels, setLikedReels] = useState<Set<string>>(new Set());
   const [videoLoading, setVideoLoading] = useState<Record<number, boolean>>({});
   const [videoError, setVideoError] = useState<Record<number, boolean>>({});
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
-  const {
-    reels,
-    loading,
-    error,
-    updateLikes,
-    updateShares
-  } = useReels();
+  const { reels, loading, error } = useReels();
   const currentReel = reels[currentReelIndex];
 
   // Initialize video refs array when reels change
@@ -212,44 +205,7 @@ const Reels = () => {
       }));
     }
   };
-  const handleLike = async (reelId: string) => {
-    const isCurrentlyLiked = likedReels.has(reelId);
-    if (isCurrentlyLiked) {
-      setLikedReels(prev => {
-        const newSet = new Set(prev);
-        newSet.delete(reelId);
-        return newSet;
-      });
-      await updateLikes(reelId, false);
-    } else {
-      setLikedReels(prev => new Set([...prev, reelId]));
-      await updateLikes(reelId, true);
-      toast({
-        title: "रील को लाइक किया गया!",
-        description: "आपने इस रील को पसंद किया है।"
-      });
-    }
-  };
-  const handleShare = async (reelId: string) => {
-    await updateShares(reelId);
-    toast({
-      title: "रील शेयर किया गया!",
-      description: "इस रील को सफलतापूर्वक साझा किया गया।"
-    });
-
-    // Web Share API if available
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: currentReel?.title,
-          text: currentReel?.description,
-          url: window.location.href
-        });
-      } catch (err) {
-        console.log('Share cancelled');
-      }
-    }
-  };
+  
   const formatCount = (count: number) => {
     if (count >= 1000) {
       return `${(count / 1000).toFixed(1)}K`;
@@ -357,33 +313,32 @@ const Reels = () => {
                 </div>}
             </div>
 
-            {/* Right Side Actions */}
-            <div className="absolute right-4 bottom-20 flex flex-col items-center space-y-6 z-20">
-              <Button variant="ghost" size="sm" onClick={() => handleLike(reel.id)} className={`w-12 h-12 rounded-full bg-black/30 text-white hover:bg-black/50 flex flex-col p-0 ${likedReels.has(reel.id) ? 'text-red-500' : ''}`}>
-                <Heart className={`w-6 h-6 mb-1 ${likedReels.has(reel.id) ? 'fill-current' : ''}`} />
-                <span className="text-xs">{formatCount(reel.likes_count)}</span>
-              </Button>
+            {/* Interaction Panel */}
+            <div className="absolute right-4 bottom-20 z-20">
+              <ReelInteractionPanel 
+                reelId={reel.id}
+                initialLikes={reel.likes_count || 0}
+                initialComments={reel.comments_count || 0}
+              />
+            </div>
 
-              <Button variant="ghost" size="sm" className="w-12 h-12 rounded-full bg-black/30 text-white hover:bg-black/50 flex flex-col p-0">
-                <MessageCircle className="w-6 h-6 mb-1" />
-                <span className="text-xs">{formatCount(reel.comments_count)}</span>
-              </Button>
-
-              <Button variant="ghost" size="sm" onClick={() => handleShare(reel.id)} className="w-12 h-12 rounded-full bg-black/30 text-white hover:bg-black/50 flex flex-col p-0">
-                <Share2 className="w-6 h-6 mb-1" />
-                <span className="text-xs">{formatCount(reel.shares_count)}</span>
-              </Button>
-
-              <Button variant="ghost" size="sm" onClick={e => {
-            e.stopPropagation();
-            toggleMute();
-          }} className="w-12 h-12 rounded-full bg-black/30 text-white hover:bg-black/50">
-                {isMuted ? <VolumeX className="w-6 h-6" /> : <Volume2 className="w-6 h-6" />}
+            {/* Audio Control */}
+            <div className="absolute top-20 right-4 z-20">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={e => {
+                  e.stopPropagation();
+                  toggleMute();
+                }} 
+                className="w-10 h-10 rounded-full bg-black/30 text-white hover:bg-black/50"
+              >
+                {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
               </Button>
             </div>
 
             {/* Bottom Content */}
-            <div className="absolute bottom-4 left-4 right-16 z-20">
+            <div className="absolute bottom-4 left-4 right-20 z-20">
               <h3 className="text-white font-semibold text-lg mb-2">
                 {reel.title}
               </h3>
