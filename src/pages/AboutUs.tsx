@@ -21,7 +21,7 @@ const AboutUs = () => {
         <section className="mb-12">
           <Card className="cosmic-card">
             <CardHeader className="text-center">
-              <CardTitle className="text-3xl md:text-4xl sacred-text mb-4">
+              <CardTitle className="text-3xl md:text-4xl sacred-text mb-4 py-[20px]">
                 धर्मयुग - आध्यात्मिक यात्रा का साथी
               </CardTitle>
               <p className="text-xl text-accent font-semibold">
@@ -53,7 +53,7 @@ const AboutUs = () => {
                   <p className="text-muted-foreground">
                     प्रत्येक व्यक्ति को अपनी आध्यात्मिक यात्रा में मार्गदर्शन प्रदान करना और धर्म की सच्ची शिक्षा देना।
                   </p>
-                  <p className="text-sm text-muted-foreground/80 mt-2">
+                  <p className="text-sm text-muted-foreground/80 mt-2 my-[28px]">
                     To provide guidance to every individual in their spiritual journey and impart true teachings of dharma.
                   </p>
                 </div>
@@ -67,7 +67,7 @@ const AboutUs = () => {
                   <p className="text-muted-foreground">
                     वैश्विक स्तर पर हिंदू संस्कृति का प्रचार-प्रसार करना और आधुनिक तकनीक के साथ पारंपरिक ज्ञान को जोड़ना।
                   </p>
-                  <p className="text-sm text-muted-foreground/80 mt-2">
+                  <p className="text-sm text-muted-foreground/80 mt-2 my-[28px]">
                     To promote Hindu culture globally and combine traditional knowledge with modern technology.
                   </p>
                 </div>
