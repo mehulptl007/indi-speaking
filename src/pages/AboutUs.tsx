@@ -110,7 +110,7 @@ const AboutUs = () => {
               <CardHeader className="text-center">
                 <div className="w-32 h-32 mx-auto mb-4 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center">
                   <div className="w-28 h-28 rounded-full bg-muted flex items-center justify-center">
-                    <div className="text-4xl">🙏</div>
+                    <div className="text-4xl">🪔</div>
                   </div>
                 </div>
                 <CardTitle className="text-2xl sacred-text">Mehul Patel</CardTitle>
