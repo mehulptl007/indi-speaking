@@ -91,7 +91,7 @@ const AboutUs = () => {
                     <div className="text-4xl">🕉️</div>
                   </div>
                 </div>
-                <CardTitle className="text-2xl sacred-text">Virendra Pal</CardTitle>
+                <CardTitle className="text-2xl sacred-text">Savita Pal</CardTitle>
                 <p className="text-lg text-accent font-semibold">
               </p>
                 <p className="text-muted-foreground">संस्थापक एवं मुख्य कार्यकारी अधिकारी</p>
@@ -113,7 +113,7 @@ const AboutUs = () => {
                     <div className="text-4xl">🪔</div>
                   </div>
                 </div>
-                <CardTitle className="text-2xl sacred-text">Mehul Patel</CardTitle>
+                <CardTitle className="text-2xl sacred-text">Richa Patel</CardTitle>
                 <p className="text-lg text-accent font-semibold">
               </p>
                 <p className="text-muted-foreground">सह-संस्थापक एवं रचनात्मक निदेशक</p>
